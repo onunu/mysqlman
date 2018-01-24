@@ -1,5 +1,6 @@
 require "mysqlman/version"
+require 'mysqlman/user'
+require 'mysqlman/privilege/global'
 
 module Mysqlman
-  # Your code goes here...
 end
