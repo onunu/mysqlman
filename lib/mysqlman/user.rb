@@ -20,12 +20,16 @@ module Mysqlman
       @user = user
     end
 
-    def global_privileges
-      Privilege::Global.new(user: @user, host: @host).all_privileges
+    def name_with_host
+      "#{@user}@#{@host}"
     end
 
-    def schema_privileges(schema_name)
-      Privilege::Schema.new(user: @user, host: @host, schema: schema_name).all_privileges
+    def global_privileges
+      Privilege::Global.new(user: self).all_privileges
+    end
+
+    def schema_privileges
+      Privilege::Schema.new(user: self).all_privileges
     end
   end
 end

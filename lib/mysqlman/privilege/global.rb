@@ -6,14 +6,14 @@ module Mysqlman
 
       TABLE = 'information_schema.USER_PRIVILEGES'
 
-      def initialize(user:, host:)
+      # @params user: User
+      def initialize(user:)
         @user = user
-        @host = host
       end
 
       def all_privileges
         conn = Connection.new
-        privileges = conn.query("SELECT PRIVILEGE_TYPE FROM #{TABLE} WHERE GRANTEE = '\\\'#{@user}\\\'@\\\'#{@host}\\\''")
+        privileges = conn.query("SELECT PRIVILEGE_TYPE FROM #{TABLE} WHERE GRANTEE = '\\\'#{@user.user}\\\'@\\\'#{@user.host}\\\''")
         privileges.to_a.map(&:values).flatten
       end
     end
