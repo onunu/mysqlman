@@ -9,8 +9,8 @@ module Mysqlman
     end
 
     def init!
-      create_exclude_config unless File.exists?(EXCLUDE_FILE)
-      #create_roles_dir unless Dir.exists?(ROLE_DIR)
+      File.exists?(EXCLUDE_FILE) ? @logger.info('skip: creation excludes.d') : create_exclude_config
+      Dir.exists?(ROLE_DIR) ? @logger.info('skip: creation roles.d') : create_roles_dir
       #create_users_dir unless Dir.exists?(USER_DIR)
     end
 
