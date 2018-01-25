@@ -11,7 +11,7 @@ module Mysqlman
     def init!
       File.exists?(EXCLUDE_FILE) ? @logger.info('skip: creation excludes.d') : create_exclude_config
       Dir.exists?(ROLE_DIR) ? @logger.info('skip: creation roles.d') : create_roles_dir
-      #create_users_dir unless Dir.exists?(USER_DIR)
+      Dir.exists?(USER_DIR) ? @logger.info('skip: creation users.d') : create_users_dir
     end
 
     private
@@ -19,18 +19,20 @@ module Mysqlman
     def create_exclude_config
       unless Dir.exists?(EXCLUDE_DIR)
         Dir.mkdir(EXCLUDE_DIR)
-        @logger.info("create: #{EXCLUDE_DIR}")
+        @logger.info("created: #{EXCLUDE_DIR}")
       end
       File.open(EXCLUDE_FILE, 'w') { |file| file.puts(User.all.map(&:name_with_host).to_yaml) }
-      @logger.info("create: #{EXCLUDE_FILE}")
+      @logger.info("created: #{EXCLUDE_FILE}")
     end
 
-    #def roles_file_path
-    #  File.join(CONFIG_DIR, 'roles.d', 'sample.yml')
-    #end
+    def create_roles_dir
+      Dir.mkdir(ROLE_DIR)
+      @logger.info("created: #{ROLE_DIR}")
+    end
 
-    #def users_file_path
-    #  File.join(CONFIG_DIR, 'users.d', 'sample.yml')
-    #end
+    def create_users_dir
+      Dir.mkdir(USER_DIR)
+      @logger.info("created: #{USER_DIR}")
+    end
   end
 end
