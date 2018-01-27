@@ -2,6 +2,7 @@ require 'mysqlman/connection'
 
 module Mysqlman
   class User
+    HOST_ALL = '%'
     class << self
       def all
         conn = Connection.new
@@ -9,9 +10,13 @@ module Mysqlman
           self.new(host: row['Host'], user: row['User'])
         end
       end
-    end
 
-    HOST_ALL = '%'
+      def find(user, host = HOST_ALL)
+        conn = Connection.new
+        user = conn.query("SELECT Host, User FROM mysql.user WHERE Host = '#{host}' AND User = '#{user}'").first
+        self.new(host: user['Host'], user: user['User']) if !user.nil?
+      end
+    end
 
     attr_reader :user, :host
 
