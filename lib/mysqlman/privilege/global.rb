@@ -6,15 +6,14 @@ module Mysqlman
 
       TABLE = 'information_schema.USER_PRIVILEGES'
 
-      # @params user: User
       def initialize(user:)
         @user = user
       end
 
       def all_privileges
         conn = Connection.new
-        privileges = conn.query("SELECT PRIVILEGE_TYPE FROM #{TABLE} WHERE GRANTEE = '\\\'#{@user.user}\\\'@\\\'#{@user.host}\\\''")
-        privileges.to_a.map(&:values).flatten
+        privileges = conn.query("SELECT PRIVILEGE_TYPE, IS_GRANTABLE FROM #{TABLE} WHERE GRANTEE = '\\\'#{@user.user}\\\'@\\\'#{@user.host}\\\''")
+        privileges.to_a.map { |row| {type: row['PRIVILEGE_TYPE'], grant_option: row['IS_GRANTABLE'] == 'YES' ? true : false} }
       end
     end
   end
