@@ -1,7 +1,10 @@
 require "mysqlman/version"
 require 'mysqlman/user'
+require 'mysqlman/role'
 require 'mysqlman/initializer'
 require 'mysqlman/privilege/global'
+require 'mysqlman/privilege/schema'
+require 'mysqlman/privilege/table'
 
 module Mysqlman
     EXE_DIR = Dir.pwd

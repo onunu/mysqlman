@@ -26,7 +26,7 @@ module Mysqlman
     end
 
     def name_with_host
-      { 'user' => @user, 'host' =>  @host }
+      { 'user' => @user, 'host' => @host }
     end
 
     def global_privileges
@@ -35,6 +35,10 @@ module Mysqlman
 
     def schema_privileges
       Privilege::Schema.new(user: self).all_privileges
+    end
+
+    def table_privileges
+      Privilege::Table.new(user: self).all_privileges
     end
   end
 end
