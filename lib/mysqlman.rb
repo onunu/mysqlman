@@ -7,12 +7,12 @@ require 'mysqlman/privilege/schema'
 require 'mysqlman/privilege/table'
 
 module Mysqlman
-    EXE_DIR = Dir.pwd
-    EXCLUDE_DIR = File.join(EXE_DIR, 'excludes.d')
-    EXCLUDE_FILE = File.join(EXCLUDE_DIR, 'default.yml')
+  EXE_DIR = Dir.pwd
+  EXCLUDE_DIR = File.join(EXE_DIR, 'excludes.d')
+  EXCLUDE_FILE = File.join(EXCLUDE_DIR, 'default.yml')
 
-    ROLE_DIR = File.join(EXE_DIR, 'roles.d')
-    USER_DIR = File.join(EXE_DIR, 'users.d')
+  ROLE_DIR = File.join(EXE_DIR, 'roles.d')
+  USER_DIR = File.join(EXE_DIR, 'users.d')
 
-    MANAGER_CONFIG = File.join(EXE_DIR, 'config', 'manager.yml')
+  MANAGER_CONFIG = File.join(EXE_DIR, 'config', 'manager.yml')
 end
