@@ -9,6 +9,11 @@ module Mysqlman
           self.new(YAML.load_file(file))
         end
       end
+
+      def find(name)
+        roles = self.all
+        roles.select { |role| role.name == name }.first
+      end
     end
 
     attr_reader :name, :config
