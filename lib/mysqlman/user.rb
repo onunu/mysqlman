@@ -4,7 +4,6 @@ require 'logger'
 
 module Mysqlman
   class User
-    HOST_ALL = '%'
     PASSWORD_LENGTH = 8
     class << self
       def all

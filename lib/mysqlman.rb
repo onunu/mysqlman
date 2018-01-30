@@ -5,6 +5,7 @@ require 'mysqlman/initializer'
 require 'mysqlman/privilege/global'
 require 'mysqlman/privilege/schema'
 require 'mysqlman/privilege/table'
+require 'mysqlman/runner'
 
 module Mysqlman
   EXE_DIR = Dir.pwd
@@ -15,4 +16,6 @@ module Mysqlman
   USER_DIR = File.join(EXE_DIR, 'users.d')
 
   MANAGER_CONFIG = File.join(EXE_DIR, 'config', 'manager.yml')
+
+  HOST_ALL = '%'
 end
