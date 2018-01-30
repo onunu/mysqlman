@@ -1,8 +1,11 @@
 require 'mysqlman/connection'
+require 'securerandom'
+require 'logger'
 
 module Mysqlman
   class User
     HOST_ALL = '%'
+    PASSWORD_LENGTH = 8
     class << self
       def all
         conn = Connection.new
@@ -15,6 +18,14 @@ module Mysqlman
         conn = Connection.new
         user = conn.query("SELECT Host, User FROM mysql.user WHERE Host = '#{host}' AND User = '#{user}'").first
         self.new(host: user['Host'], user: user['User']) if !user.nil?
+      end
+
+      def create(user, host = HOST_ALL)
+        conn = Connection.new
+        password = SecureRandom.urlsafe_base64(PASSWORD_LENGTH)
+        conn.query("CREATE USER '#{user}'@'#{host}' IDENTIFIED BY '#{password}'")
+        Logger.new(STDOUT).info("Created user: '#{user}'@'#{host}', password is '#{password}'")
+        self.new(host: host, user: user)
       end
     end
 
@@ -39,6 +50,11 @@ module Mysqlman
 
     def table_privileges
       Privilege::Table.new(user: self).all_privileges
+    end
+
+    def drop
+      conn = Connection.new
+      conn.query("DROP USER '#{@user}'@'#{@host}'")
     end
   end
 end
