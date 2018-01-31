@@ -7,6 +7,7 @@ module Mysqlman
 
     def run
       delete_unknown_user
+      create_shortage_user
     end
 
     private
@@ -28,18 +29,21 @@ module Mysqlman
         difinitions = YAML.load_file(file)
         difinitions.map do |role, users|
           users.map do |user|
-            { role: role, user: user.keys.first, host: user['host'] || HOST_ALL }
+            User.new({ role: role, user: user.keys.first, host: user['host'] || HOST_ALL })
           end
         end
       end.flatten
     end
 
     def delete_unknown_user
-      managed_users = @managed_users.map do |u|
-        { user: u[:user], host: u[:host] }
+      @current_users.each do |cu|
+        cu.drop unless @managed_users.any? { |mu| cu.user == mu.user && cu.host == mu.host }
       end
-      @current_users.each do |u|
-        u.drop unless managed_users.include?({ user: u.user, host: u.host })
+    end
+
+    def create_shortage_user
+      @managed_users.each do |user|
+        user.create unless user.exists?
       end
     end
   end
