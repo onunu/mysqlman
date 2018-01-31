@@ -39,7 +39,6 @@ module Mysqlman
         { user: u[:user], host: u[:host] }
       end
       @current_users.each do |u|
-        binding.pry
         u.drop unless managed_users.include?({ user: u.user, host: u.host })
       end
     end
