@@ -34,15 +34,15 @@ module Mysqlman
     end
 
     def global_privileges
-      Privilege::Global.new(user: self).all_privileges
+      Privileges::Global.new(user: self)
     end
 
     def schema_privileges
-      Privilege::Schema.new(user: self).all_privileges
+      Privileges::Schema.new(user: self)
     end
 
     def table_privileges
-      Privilege::Table.new(user: self).all_privileges
+      Privileges::Table.new(user: self)
     end
 
     def exists?
@@ -62,6 +62,7 @@ module Mysqlman
     def drop
       conn = Connection.new
       conn.query("DROP USER '#{@user}'@'#{@host}'")
+      Logger.new(STDOUT).info("Deleted user: '#{@user}'@'#{@host}'")
     end
   end
 end

@@ -23,23 +23,46 @@ module Mysqlman
       @config = config.values.first
     end
 
-    def build_grants_statements(user:, host:)
-      [
-        build_global_grants_statements(user, host),
-        build_schema_grants_statements(user, host),
-        build_table_grants_statements(user, host)
-      ]
+    def global_privileges
+      @config['global'].map do |config|
+        {
+          type: config.keys.first.upcase.gsub('_', ' '),
+          grant_option: !!config.dig(:grant)
+        }
+      end
     end
 
-    private
-
-    def build_global_grants_statements(user:, host:)
+    def schema_privileges
+      @config['schema'].map do |config|
+        config.map do |schema, privs|
+          privs.map do |priv|
+            {
+              schema: schema,
+              type: priv.keys.first,
+              grant_option: !!priv.dig(:grant)
+            }
+          end
+        end
+      end.flatten
     end
 
-    def build_schema_grants_statements(user:, host:)
-    end
-
-    def build_table_grants_statements(user:, host:)
+    def table_privileges
+      @config['table'].map do |schema_privs|
+        schema_privs.map do |schema_name, table_privs|
+          table_privs.map do |table_priv|
+            table_priv.map do |table_name, privs|
+              privs.map do |priv|
+                {
+                  schema: schema_name,
+                  table: table_name,
+                  type: priv.keys.first,
+                  grant_option: !!priv.dig(:grant)
+                }
+              end
+            end
+          end
+        end
+      end.flatten
     end
   end
 end

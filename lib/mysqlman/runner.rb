@@ -8,6 +8,7 @@ module Mysqlman
     def run
       delete_unknown_user
       create_shortage_user
+      revoke_extra_privileges
     end
 
     private
@@ -44,6 +45,20 @@ module Mysqlman
     def create_shortage_user
       @managed_users.each do |user|
         user.create unless user.exists?
+      end
+    end
+
+    def revoke_extra_privileges
+      @managed_users.each do |user|
+        revoke_global_extra_privileges(user)
+      end
+    end
+
+    def revoke_global_extra_privileges(user)
+      current = user.global_privileges.fetch
+      current.delete(Privileges::Global::USAGE_PRIV)
+      (current - user.role.global_privileges).each do |priv|
+        user.global_privileges.revoke(priv)
       end
     end
   end
