@@ -1,10 +1,22 @@
 require 'mysqlman/connection'
+require 'yaml'
 
 module Mysqlman
   module Privileges
     class Table
       TABLE = 'information_schema.TABLE_PRIVILEGES'
       COLUMNS = {table: 'TABLE_NAME', schema: 'TABLE_SCHEMA', type: 'PRIVILEGE_TYPE', grant_option: 'IS_GRANTABLE'}
+
+      def self.all_privileges(schema_name, table_name, grant_option: false)
+        YAML.load_file(File.join(__dir__, 'all_privileges.yml'))['table_privileges'].keys.map do |priv|
+          {
+            schema: schema_name,
+            table: table_name,
+            type: priv,
+            grant_option: grant_option
+          }
+        end
+      end
 
       def initialize(user:)
         @user = user
