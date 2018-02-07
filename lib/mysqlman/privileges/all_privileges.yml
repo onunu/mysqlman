@@ -1,0 +1,33 @@
+---
+table_privileges: &table
+  ALTER:
+  CREATE VIEW:
+  CREATE:
+  DELETE:
+  DROP:
+  INDEX:
+  INSERT:
+  SELECT:
+  SHOW VIEW:
+  TRIGGER:
+  UPDATE:
+
+schema_privileges: &schema
+  <<: *table
+  CREATE:
+  DROP:
+  EVENT:
+  LOCK TABLES:
+
+global_privileges:
+  <<: *schema
+  CREATE TABLESPACE:
+  CREATE USER:
+  FILE:
+  PROCESS:
+  RELOAD:
+  REPLICATION CLIENT:
+  REPLICATION SLAVE:
+  SHOW DATABASES:
+  SHUTDOWN:
+  SUPER:
