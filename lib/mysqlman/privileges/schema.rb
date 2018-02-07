@@ -18,6 +18,11 @@ module Mysqlman
         reload_privileges
       end
 
+      def revoke(priv)
+        @conn.query("REVOKE #{priv[:type]} ON #{priv[:schema]}.* FROM '#{@user.user}'@'#{@user.host}'")
+        reload_privileges
+      end
+
       private
 
       def reload_privileges

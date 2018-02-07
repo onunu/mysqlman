@@ -51,6 +51,8 @@ module Mysqlman
     def revoke_extra_privileges
       @managed_users.each do |user|
         revoke_global_extra_privileges(user)
+        revoke_schema_extra_privileges(user)
+        revoke_table_extra_privileges(user)
       end
     end
 
@@ -59,6 +61,20 @@ module Mysqlman
       current.delete(Privileges::Global::USAGE_PRIV)
       (current - user.role.global_privileges).each do |priv|
         user.global_privileges.revoke(priv)
+      end
+    end
+
+    def revoke_schema_extra_privileges(user)
+      current = user.schema_privileges.fetch
+      (current - user.role.schema_privileges).each do |priv|
+        user.schema_privileges.revoke(priv)
+      end
+    end
+
+    def revoke_table_extra_privileges(user)
+      current = user.table_privileges.fetch
+      (current - user.role.table_privileges).each do |priv|
+        user.table_privileges.revoke(priv)
       end
     end
   end
