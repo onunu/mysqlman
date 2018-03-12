@@ -25,6 +25,7 @@ module Mysqlman
 
     def global_privileges
       return [] if @config['global'].nil?
+      return Privileges::Global.all_privileges(grant_option: @config['global'].first['grant']) if @config['global'].first.keys.first == 'all'
       @config['global'].map do |config|
         {
           type: config.keys.first.upcase.gsub('_', ' '),
@@ -36,10 +37,11 @@ module Mysqlman
     def schema_privileges
       return [] if @config['schema'].nil?
       @config['schema'].map do |schemas|
-        schemas.map do |schema, privs|
+        schemas.map do |schema_name, privs|
+          next Privileges::Schema.all_privileges(schema_name, grant_option: privs.first['grant']) if privs.first.keys.first == 'all'
           privs.map do |priv|
             {
-              schema: schema,
+              schema: schema_name,
               type: priv.keys.first.upcase.gsub('_', ' '),
               grant_option: !!priv.dig('grant')
             }
@@ -54,6 +56,7 @@ module Mysqlman
         schemas.map do |schema_name, tables|
           tables.map do |table|
             table.map do |table_name, privs|
+              next Privileges::Table.all_privileges(schema_name, table_name, grant_option: privs.first['grant']) if privs.first.keys.first == 'all'
               privs.map do |priv|
                 {
                   schema: schema_name,

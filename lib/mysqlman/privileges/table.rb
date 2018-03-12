@@ -33,6 +33,12 @@ module Mysqlman
         reload_privileges
       end
 
+      def grant(priv)
+        grant_option = priv[:grant_option] ? 'WITH GRANT OPTION' : ''
+        @conn.query("GRANT #{priv[:type]} ON #{priv[:schema]}.#{priv[:table]} TO '#{@user.user}'@'#{@user.host}' #{grant_option}")
+        reload_privileges
+      end
+
       private
 
       def reload_privileges

@@ -9,6 +9,7 @@ module Mysqlman
       delete_unknown_user
       create_shortage_user
       revoke_extra_privileges
+      grant_shortage_privileges
     end
 
     private
@@ -75,6 +76,35 @@ module Mysqlman
       current = user.table_privileges.fetch
       (current - user.role.table_privileges).each do |priv|
         user.table_privileges.revoke(priv)
+      end
+    end
+
+    def grant_shortage_privileges
+      @managed_users.each do |user|
+        grant_global_shortage_privileges(user)
+        grant_schema_shortage_privileges(user)
+        grant_table_shortage_privileges(user)
+      end
+    end
+
+    def grant_global_shortage_privileges(user)
+      current = user.global_privileges.fetch
+      (user.role.global_privileges - current).each do |priv|
+        user.global_privileges.grant(priv)
+      end
+    end
+
+    def grant_schema_shortage_privileges(user)
+      current = user.schema_privileges.fetch
+      (user.role.schema_privileges - current).each do |priv|
+        user.schema_privileges.grant(priv)
+      end
+    end
+
+    def grant_table_shortage_privileges(user)
+      current = user.table_privileges.fetch
+      (user.role.table_privileges - current).each do |priv|
+        user.table_privileges.grant(priv)
       end
     end
   end
