@@ -1,6 +1,5 @@
 require 'mysql2'
 require 'yaml'
-require 'pry'
 
 module Mysqlman
   class Connection

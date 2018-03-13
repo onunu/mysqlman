@@ -5,7 +5,7 @@ module Mysqlman
       @managed_users = managed_users
     end
 
-    def run
+    def run!
       delete_unknown_user
       create_shortage_user
       revoke_extra_privileges

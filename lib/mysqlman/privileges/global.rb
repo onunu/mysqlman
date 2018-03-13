@@ -1,5 +1,6 @@
 require 'mysqlman/connection'
 require 'yaml'
+require 'logger'
 
 module Mysqlman
   module Privileges
@@ -20,6 +21,7 @@ module Mysqlman
       def initialize(user:)
         @user = user
         @conn = Connection.new
+        @logger = Logger.new(STDOUT)
         reload_privileges
       end
 
@@ -28,13 +30,18 @@ module Mysqlman
       end
 
       def revoke(priv)
-        @conn.query("REVOKE #{priv[:type]} ON *.* FROM '#{@user.user}'@'#{@user.host}'")
+        grant_option = priv[:grant_option] ? ', GRANT OPTION' : ''
+        query = "REVOKE #{priv[:type]} #{grant_option} ON *.* FROM '#{@user.user}'@'#{@user.host}'"
+        @conn.query(query)
+        @logger.info(query)
         reload_privileges
       end
 
       def grant(priv)
         grant_option = priv[:grant_option] ? 'WITH GRANT OPTION' : ''
-        @conn.query("GRANT #{priv[:type]} ON *.* TO '#{@user.user}'@'#{@user.host}' #{grant_option}")
+        query = "GRANT #{priv[:type]} ON *.* TO '#{@user.user}'@'#{@user.host}' #{grant_option}"
+        @conn.query(query)
+        @logger.info(query)
         reload_privileges
       end
 
