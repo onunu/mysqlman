@@ -7,15 +7,13 @@ module Mysqlman
     class Global
       TABLE = 'information_schema.USER_PRIVILEGES'
       COLUMNS = {type: 'PRIVILEGE_TYPE', grant_option: 'IS_GRANTABLE'}
-      USAGE_PRIV = {type: 'USAGE', grant_option: false}
+      USAGE_PRIV = {type: 'USAGE'}
 
       def self.all_privileges(grant_option: false)
-        YAML.load_file(File.join(__dir__, 'all_privileges.yml'))['global_privileges'].keys.map do |priv|
-          {
-            type: priv,
-            grant_option: grant_option
-          }
+        privs = YAML.load_file(File.join(__dir__, 'all_privileges.yml'))['global_privileges'].keys.map do |priv|
+          { type: priv }
         end
+        grant_option ? privs.push(type: 'GRANT OPTION') : privs
       end
 
       def initialize(user:)
@@ -30,16 +28,14 @@ module Mysqlman
       end
 
       def revoke(priv)
-        grant_option = priv[:grant_option] ? ', GRANT OPTION' : ''
-        query = "REVOKE #{priv[:type]} #{grant_option} ON *.* FROM '#{@user.user}'@'#{@user.host}'"
+        query = "REVOKE #{priv[:type]} ON *.* FROM '#{@user.user}'@'#{@user.host}'"
         @conn.query(query)
         @logger.info(query)
         reload_privileges
       end
 
       def grant(priv)
-        grant_option = priv[:grant_option] ? 'WITH GRANT OPTION' : ''
-        query = "GRANT #{priv[:type]} ON *.* TO '#{@user.user}'@'#{@user.host}' #{grant_option}"
+        query = "GRANT #{priv[:type]} ON *.* TO '#{@user.user}'@'#{@user.host}'"
         @conn.query(query)
         @logger.info(query)
         reload_privileges
@@ -48,8 +44,10 @@ module Mysqlman
       private
 
       def reload_privileges
-        privileges = @conn.query("SELECT #{COLUMNS.values.join(',')} FROM #{TABLE} WHERE GRANTEE = '\\\'#{@user.user}\\\'@\\\'#{@user.host}\\\''")
-        @privileges = privileges.to_a.map { |row| {type: row[COLUMNS[:type]], grant_option: row[COLUMNS[:grant_option]] == 'YES' ? true : false} }
+        privs = @conn.query("SELECT #{COLUMNS.values.join(',')} FROM #{TABLE} WHERE GRANTEE = '\\\'#{@user.user}\\\'@\\\'#{@user.host}\\\''").to_a
+        is_grant = privs.all? { |priv| priv['IS_GRANTABLE'] == 'YES' }
+        formated = privs.map { |priv| {type: priv[COLUMNS[:type]]} }
+        is_grant ? formated.push(type: 'GRANT OPTION') : formated
       end
     end
   end

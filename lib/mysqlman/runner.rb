@@ -28,8 +28,7 @@ module Mysqlman
 
     def managed_users
       Dir.glob("#{USER_DIR}/*.yml").map do |file|
-        difinitions = YAML.load_file(file)
-        difinitions.map do |role, users|
+        YAML.load_file(file).map do |role, users|
           users.map do |user|
             User.new({ role: role, user: user.keys.first, host: user['host'] || HOST_ALL })
           end
