@@ -9,24 +9,23 @@ module Mysqlman
       def all
         conn = Connection.new
         conn.query('SELECT Host, User FROM mysql.user').map do |row|
-          self.new(host: row['Host'], user: row['User'])
+          new(host: row['Host'], user: row['User'])
         end
       end
 
       def find(user, host = HOST_ALL)
         conn = Connection.new
         user = conn.query("SELECT Host, User FROM mysql.user WHERE Host = '#{host}' AND User = '#{user}'").first
-        self.new(host: user['Host'], user: user['User']) if !user.nil?
+        new(host: user['Host'], user: user['User']) unless user.nil?
       end
-
     end
 
     attr_reader :user, :host, :role
 
-    def initialize(user: , host: HOST_ALL, role: nil)
+    def initialize(user:, host: HOST_ALL, role: nil)
       @host = host
       @user = user
-      @role = Role.find(role) if role != nil
+      @role = Role.find(role) unless role.nil?
     end
 
     def name_with_host

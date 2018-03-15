@@ -5,9 +5,9 @@ require 'logger'
 module Mysqlman
   module Privileges
     class Global
-      TABLE = 'information_schema.USER_PRIVILEGES'
-      COLUMNS = {type: 'PRIVILEGE_TYPE', grant_option: 'IS_GRANTABLE'}
-      USAGE_PRIV = {type: 'USAGE'}
+      TABLE = 'information_schema.USER_PRIVILEGES'.freeze
+      COLUMNS = { type: 'PRIVILEGE_TYPE', grant_option: 'IS_GRANTABLE' }.freeze
+      USAGE_PRIV = { type: 'USAGE' }.freeze
 
       def self.all_privileges(grant_option: false)
         privs = YAML.load_file(File.join(__dir__, 'all_privileges.yml'))['global_privileges'].keys.map do |priv|
@@ -46,7 +46,7 @@ module Mysqlman
       def reload_privileges
         privs = @conn.query("SELECT #{COLUMNS.values.join(',')} FROM #{TABLE} WHERE GRANTEE = '\\\'#{@user.user}\\\'@\\\'#{@user.host}\\\''").to_a
         is_grant = privs.all? { |priv| priv['IS_GRANTABLE'] == 'YES' }
-        formated = privs.map { |priv| {type: priv[COLUMNS[:type]]} }
+        formated = privs.map { |priv| { type: priv[COLUMNS[:type]] } }
         is_grant ? formated.push(type: 'GRANT OPTION') : formated
       end
     end

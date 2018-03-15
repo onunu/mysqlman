@@ -5,8 +5,8 @@ require 'logger'
 module Mysqlman
   module Privileges
     class Schema
-      TABLE = 'information_schema.SCHEMA_PRIVILEGES'
-      COLUMNS = {schema: 'TABLE_SCHEMA', type: 'PRIVILEGE_TYPE', grant_option: 'IS_GRANTABLE'}
+      TABLE = 'information_schema.SCHEMA_PRIVILEGES'.freeze
+      COLUMNS = { schema: 'TABLE_SCHEMA', type: 'PRIVILEGE_TYPE', grant_option: 'IS_GRANTABLE' }.freeze
 
       def self.all_privileges(schema_name, grant_option: false)
         privs = YAML.load_file(File.join(__dir__, 'all_privileges.yml'))['schema_privileges'].keys.map do |priv|
@@ -52,7 +52,7 @@ module Mysqlman
           {
             schema: row[COLUMNS[:schema]],
             type: row[COLUMNS[:type]],
-            grant_option: row[COLUMNS[:grant_option]] == 'YES' ? true : false
+            grant_option: row[COLUMNS[:grant_option]] == 'YES'
           }
         end
         schemas = preformated_privs.map { |privs| privs[:schema] }.uniq

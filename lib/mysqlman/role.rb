@@ -6,12 +6,12 @@ module Mysqlman
       def all
         files = Dir.glob("#{ROLE_DIR}/*.yml")
         files.map do |file|
-          self.new(YAML.load_file(file))
+          new(YAML.load_file(file))
         end
       end
 
       def find(name)
-        roles = self.all
+        roles = all
         roles.select { |role| role.name == name }.first
       end
     end
@@ -27,7 +27,7 @@ module Mysqlman
       return [] if @config['global'].nil?
       is_grant = @config['global'].map(&:keys).flatten.include?('grant')
       return Privileges::Global.all_privileges(grant_option: is_grant) if @config['global'].map(&:keys).flatten.include?('all')
-      @config['global'].map(&:keys).flatten.map { |priv| { type: priv.upcase.gsub('_', ' ') } }
+      @config['global'].map(&:keys).flatten.map { |priv| { type: priv.upcase.tr('_', ' ') } }
     end
 
     def schema_privileges
@@ -39,7 +39,7 @@ module Mysqlman
           privs.map(&:keys).flatten.map do |priv|
             {
               schema: schema_name,
-              type: priv.upcase.gsub('_', ' ')
+              type: priv.upcase.tr('_', ' ')
             }
           end
         end
@@ -58,7 +58,7 @@ module Mysqlman
                 {
                   schema: schema_name,
                   table: table_name,
-                  type: priv.upcase.gsub('_', ' ')
+                  type: priv.upcase.tr('_', ' ')
                 }
               end
             end
