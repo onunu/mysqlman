@@ -1,5 +1,5 @@
 ---
-table_privileges: &table
+table: &table
   ALTER:
   CREATE VIEW:
   CREATE:
@@ -12,14 +12,14 @@ table_privileges: &table
   TRIGGER:
   UPDATE:
 
-schema_privileges: &schema
+schema: &schema
   <<: *table
   CREATE:
   DROP:
   EVENT:
   LOCK TABLES:
 
-global_privileges:
+global:
   <<: *schema
   CREATE TABLESPACE:
   CREATE USER:

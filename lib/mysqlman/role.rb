@@ -23,48 +23,49 @@ module Mysqlman
       @config = config.values.first
     end
 
-    def global_privileges
-      return [] if @config['global'].nil?
-      is_grant = @config['global'].map(&:keys).flatten.include?('grant')
-      return Privileges::Global.all_privileges(grant_option: is_grant) if @config['global'].map(&:keys).flatten.include?('all')
-      @config['global'].map(&:keys).flatten.map { |priv| { type: priv.upcase.tr('_', ' ') } }
+    def privs
+      [
+        global_privs,
+        schema_privs,
+        table_privs
+      ].compact.flatten
     end
 
-    def schema_privileges
-      return [] if @config['schema'].nil?
-      @config['schema'].map do |schemas|
-        schemas.map do |schema_name, privs|
-          is_grant = privs.map(&:keys).flatten.include?('grant')
-          next Privileges::Schema.all_privileges(schema_name, grant_option: is_grant) if privs.map(&:keys).flatten.include?('all')
-          privs.map(&:keys).flatten.map do |priv|
-            {
-              schema: schema_name,
-              type: priv.upcase.tr('_', ' ')
-            }
-          end
-        end
-      end.flatten
+    def global_privs
+      parse_privs(@config['global'])
     end
 
-    def table_privileges
-      return [] if @config['table'].nil?
-      @config['table'].map do |schemas|
-        schemas.map do |schema_name, tables|
-          tables.map do |table|
-            table.map do |table_name, privs|
-              is_grant = privs.map(&:keys).flatten.include?('grant')
-              next Privileges::Table.all_privileges(schema_name, table_name, grant_option: is_grant) if privs.map(&:keys).flatten.include?('all')
-              privs.map(&:keys).flatten.map do |priv|
-                {
-                  schema: schema_name,
-                  table: table_name,
-                  type: priv.upcase.tr('_', ' ')
-                }
-              end
-            end
-          end
+    def schema_privs
+      @config['schema'].map do |schema_name, privs|
+        parse_privs(privs, schema_name)
+      end
+    end
+
+    def table_privs
+      @config['table'].map do |schema_name, table_config|
+        table_config.map do |table_name, privs|
+          parse_privs(privs, schema_name, table_name)
         end
-      end.flatten
+      end
+    end
+
+    def parse_privs(privs, schema = nil, table = nil)
+      return Privs.all(schema, table, grantable?(privs)) if all_priv?(privs)
+      privs.map(&:keys).flatten.map do |priv|
+        {
+          schema: schema,
+          table: table,
+          type: priv.upcase.tr('_', ' ')
+        }
+      end
+    end
+
+    def grantable?(privs)
+      privs.map(&:keys).flatten.include?('grant_option')
+    end
+
+    def all_priv?(privs)
+      privs.map(&:keys).flatten.include?('all')
     end
   end
 end

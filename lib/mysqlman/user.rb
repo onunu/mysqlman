@@ -28,6 +28,10 @@ module Mysqlman
       @role = Role.find(role) unless role.nil?
     end
 
+    def privs
+      @privs ||= Privs.new(self)
+    end
+
     def name_with_host
       { 'user' => @user, 'host' => @host }
     end
