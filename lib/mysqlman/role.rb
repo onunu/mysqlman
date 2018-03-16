@@ -24,24 +24,23 @@ module Mysqlman
     end
 
     def privs
-      [
-        global_privs,
-        schema_privs,
-        table_privs
-      ].compact.flatten
+      [global_privs, schema_privs, table_privs].compact.flatten
     end
 
     def global_privs
+      return if @config['global'].nil?
       parse_privs(@config['global'])
     end
 
     def schema_privs
+      return if @config['schema'].nil?
       @config['schema'].map do |schema_name, privs|
         parse_privs(privs, schema_name)
       end
     end
 
     def table_privs
+      return if @config['table'].nil?
       @config['table'].map do |schema_name, table_config|
         table_config.map do |table_name, privs|
           parse_privs(privs, schema_name, table_name)
@@ -51,7 +50,7 @@ module Mysqlman
 
     def parse_privs(privs, schema = nil, table = nil)
       return Privs.all(schema, table, grantable?(privs)) if all_priv?(privs)
-      privs.map(&:keys).flatten.map do |priv|
+      privs.map do |priv|
         {
           schema: schema,
           table: table,
@@ -61,11 +60,13 @@ module Mysqlman
     end
 
     def grantable?(privs)
-      privs.map(&:keys).flatten.include?('grant_option')
+      privs.map(&:upcase).any? do |priv|
+        priv.tr('_', ' ') == 'GRANT OPTION'
+      end
     end
 
     def all_priv?(privs)
-      privs.map(&:keys).flatten.include?('all')
+      privs.map(&:upcase).include?('ALL')
     end
   end
 end

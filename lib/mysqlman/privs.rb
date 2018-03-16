@@ -1,41 +1,12 @@
 require 'mysqlman/connection'
-require 'yaml'
+require 'mysqlman/privs_util'
+require 'mysqlman/privs_grant'
 require 'logger'
 
 module Mysqlman
   class Privs
-    class << self
-      def all(schema, table, grantable)
-        privs = all_privs(schema, table, lebel(schema, table))
-        grantable ? privs.push(grant_option(schema, table)) : privs
-      end
-
-      private
-
-      def all_privs(schema, table, key)
-        load_privs(key).map do |priv|
-          { schema: schema, table: table, type: priv }
-        end
-      end
-
-      def lebel(schema, table)
-        if schema && table
-          'table'
-        elsif schema
-          'schema'
-        else
-          'global'
-        end
-      end
-
-      def load_privs(key)
-        YAML.load_file(File.join(__dir__, 'all_privileges.yml'))[key].keys
-      end
-
-      def grant_option(schema = nil, table = nil)
-        { schema: schema, table: table, type: 'GRANT OPTION' }
-      end
-    end
+    extend PrivsUtil
+    include PrivsGrant
 
     def initialize(user)
       @user = user
@@ -54,17 +25,26 @@ module Mysqlman
     end
 
     def global_privs
-      privs = fetch_privs('information_schema.USER_PRIVILEGES', %w[PRIVILEGE_TYPE IS_GRANTABLE])
+      privs = fetch_privs(
+        'information_schema.USER_PRIVILEGES',
+        %w[PRIVILEGE_TYPE IS_GRANTABLE]
+      )
       format_privs(add_grantable(privs))
     end
 
     def schema_privs
-      privs = fetch_privs('information_schema.SCHEMA_PRIVILEGES', %w[TABLE_SCHEMA PRIVILEGE_TYPE IS_GRANTABLE])
+      privs = fetch_privs(
+        'information_schema.SCHEMA_PRIVILEGES',
+        %w[TABLE_SCHEMA PRIVILEGE_TYPE IS_GRANTABLE]
+      )
       format_privs(add_grantable(privs))
     end
 
     def table_privs
-      privs = fetch_privs('information_schema.TABLE_PRIVILEGES', %w[TABLE_NAME TABLE_SCHEMA PRIVILEGE_TYPE IS_GRANTABLE])
+      privs = fetch_privs(
+        'information_schema.TABLE_PRIVILEGES',
+        %w[TABLE_NAME TABLE_SCHEMA PRIVILEGE_TYPE IS_GRANTABLE]
+      )
       format_privs(add_grantable(privs))
     end
 
@@ -91,7 +71,10 @@ module Mysqlman
     def add_grantable(privs)
       privs.uniq { |priv| [priv[:schema], priv[:table]] }.each do |names|
         is_grant = grantable_collection?(privs, names)
-        privs.push(schema: names[:schema], table: names[:table], type: 'GRANT OPTION') if is_grant
+        next unless is_grant
+        privs.push(
+          schema: names[:schema], table: names[:table], type: 'GRANT OPTION'
+        )
       end
       privs
     end
@@ -104,7 +87,7 @@ module Mysqlman
     end
 
     def format_privs(privs)
-      privs.map do |priv|
+      privs.reject { |p| p[:type] == 'USAGE' }.map do |priv|
         priv.delete(:grant)
         priv
       end
