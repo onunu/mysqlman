@@ -1,4 +1,3 @@
-require 'mysqlman/connection'
 require 'logger'
 
 module Mysqlman
@@ -8,7 +7,7 @@ module Mysqlman
       @logger = Logger.new(STDOUT)
     end
 
-    def init!
+    def init
       File.exist?(EXCLUDE_FILE) ? @logger.info('skip: creation excludes.d') : create_exclude_config
       Dir.exist?(ROLE_DIR) ? @logger.info('skip: creation roles.d') : create_roles_dir
       Dir.exist?(USER_DIR) ? @logger.info('skip: creation users.d') : create_users_dir

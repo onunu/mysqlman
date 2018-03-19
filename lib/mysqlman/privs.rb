@@ -1,7 +1,6 @@
-require 'mysqlman/connection'
+require 'logger'
 require 'mysqlman/privs_util'
 require 'mysqlman/privs_grant'
-require 'logger'
 
 module Mysqlman
   class Privs

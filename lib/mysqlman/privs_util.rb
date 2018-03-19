@@ -1,4 +1,3 @@
-require 'mysqlman/connection'
 require 'yaml'
 
 module Mysqlman

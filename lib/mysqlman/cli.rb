@@ -9,12 +9,17 @@ module Mysqlman
       When you want see how to write or roles some files, please confirm README on Github.
     LONGDESC
     def init
-      Mysqlman::Initializer.new.init!
+      Initializer.new.init
     end
 
     desc 'apply', 'apply settings'
     def apply
-      Mysqlman::Runner.new.run!
+      Processor.new.apply
+    end
+
+    desc 'dryrun', 'confirm settings, with dry-run'
+    def dryrun
+      Processor.new.apply(true)
     end
   end
 end
