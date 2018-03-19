@@ -1,0 +1,7 @@
+---
+- user: mysql.session
+  host: localhost
+- user: mysql.sys
+  host: localhost
+- user: root
+  host: localhost

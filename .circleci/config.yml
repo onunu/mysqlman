@@ -1,0 +1,36 @@
+version: 2
+jobs:
+  build:
+    parallelism: 2
+    working_directory: ~/mysqlman
+
+    docker:
+      - image: circleci/ruby:2.4.1
+      - image: circleci/mysql:5.7
+        environment:
+          - MYSQL_ALLOW_EMPTY_PASSWORD=true
+          - MYSQL_DATABASE=test
+          - MYSQL_USER=root
+
+    steps:
+      - checkout
+      - run:
+          name: deps
+          command: |
+            sudo apt-get update --fix-missing
+            sudo apt-get install -y --force-yes --no-install-recommends mysql-client
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+
+
+      # Bundle install dependencies
+      - run: bundle install --jobs=4 --retry=3 --path=vendor/bundle
+
+    #      - run:
+    #          name: test mysql
+    #          command: mysql -uroot -e 'SELECT VERSION();'
+
+      - run:
+          name: Run RSpec
+          command: cd spec/dummy && bundle exec rspec ../* --format documentation --require ../spec_helper.rb

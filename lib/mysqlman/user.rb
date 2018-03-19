@@ -19,16 +19,14 @@ module Mysqlman
       end
     end
 
-    attr_reader :user, :host, :role
+    attr_reader :user, :host, :role, :privs
 
     def initialize(user:, host: HOST_ALL, role: nil)
       @host = host
       @user = user
       @role = Role.find(role) unless role.nil?
-    end
-
-    def privs
-      @privs ||= Privs.new(self)
+      @privs = Privs.new(self)
+      @conn = Connection.new
     end
 
     def name_with_host
@@ -36,23 +34,20 @@ module Mysqlman
     end
 
     def exists?
-      conn = Connection.new
-      user = conn.query("SELECT Host, User FROM mysql.user WHERE Host = '#{@host}' AND User = '#{@user}'").first
+      user = @conn.query("SELECT Host, User FROM mysql.user WHERE Host = '#{@host}' AND User = '#{@user}'").first
       !user.nil?
     end
 
     def create(debug = false)
-      conn = Connection.new
       password = debug ? '******' : SecureRandom.urlsafe_base64(PASSWORD_LENGTH)
-      conn.query("CREATE USER '#{@user}'@'#{@host}' IDENTIFIED BY '#{password}'") unless debug
-      Logger.new(STDOUT).info("Created user: '#{@user}'@'#{@host}', password is '#{password}'")
+      @conn.query("CREATE USER '#{@user}'@'#{@host}' IDENTIFIED BY '#{password}'") unless debug
+      Logger.new(STDOUT).info("Create user: '#{@user}'@'#{@host}', password is '#{password}'")
       self
     end
 
     def drop(debug = false)
-      conn = Connection.new
-      conn.query("DROP USER '#{@user}'@'#{@host}'") unless debug
-      Logger.new(STDOUT).info("Deleted user: '#{@user}'@'#{@host}'")
+      @conn.query("DROP USER '#{@user}'@'#{@host}'") unless debug
+      Logger.new(STDOUT).info("Delete user: '#{@user}'@'#{@host}'")
     end
   end
 end
