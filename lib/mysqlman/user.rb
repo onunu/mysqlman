@@ -1,4 +1,3 @@
-require 'mysqlman/connection'
 require 'securerandom'
 require 'logger'
 
@@ -28,20 +27,12 @@ module Mysqlman
       @role = Role.find(role) unless role.nil?
     end
 
+    def privs
+      @privs ||= Privs.new(self)
+    end
+
     def name_with_host
       { 'user' => @user, 'host' => @host }
-    end
-
-    def global_privileges
-      Privileges::Global.new(user: self)
-    end
-
-    def schema_privileges
-      Privileges::Schema.new(user: self)
-    end
-
-    def table_privileges
-      Privileges::Table.new(user: self)
     end
 
     def exists?
@@ -50,17 +41,17 @@ module Mysqlman
       !user.nil?
     end
 
-    def create
+    def create(debug = false)
       conn = Connection.new
-      password = SecureRandom.urlsafe_base64(PASSWORD_LENGTH)
-      conn.query("CREATE USER '#{@user}'@'#{@host}' IDENTIFIED BY '#{password}'")
+      password = debug ? '******' : SecureRandom.urlsafe_base64(PASSWORD_LENGTH)
+      conn.query("CREATE USER '#{@user}'@'#{@host}' IDENTIFIED BY '#{password}'") unless debug
       Logger.new(STDOUT).info("Created user: '#{@user}'@'#{@host}', password is '#{password}'")
       self
     end
 
-    def drop
+    def drop(debug = false)
       conn = Connection.new
-      conn.query("DROP USER '#{@user}'@'#{@host}'")
+      conn.query("DROP USER '#{@user}'@'#{@host}'") unless debug
       Logger.new(STDOUT).info("Deleted user: '#{@user}'@'#{@host}'")
     end
   end

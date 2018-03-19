@@ -2,10 +2,8 @@ require "mysqlman/version"
 require 'mysqlman/user'
 require 'mysqlman/role'
 require 'mysqlman/initializer'
-require 'mysqlman/runner'
-require 'mysqlman/privileges/global'
-require 'mysqlman/privileges/schema'
-require 'mysqlman/privileges/table'
+require 'mysqlman/processor'
+require 'mysqlman/privs'
 require 'mysqlman/cli'
 
 module Mysqlman
