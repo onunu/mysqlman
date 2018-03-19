@@ -4,6 +4,7 @@ require 'mysqlman/role'
 require 'mysqlman/initializer'
 require 'mysqlman/processor'
 require 'mysqlman/privs'
+require 'mysqlman/connection'
 require 'mysqlman/cli'
 
 module Mysqlman

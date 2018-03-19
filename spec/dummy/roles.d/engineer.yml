@@ -1,0 +1,15 @@
+---
+engineer:
+  global:
+    - select
+    - update
+  schema:
+    test:
+      - grant_option
+      - select
+      - update
+      - insert
+  table:
+    test:
+      test_accounts:
+        - delete
