@@ -9,7 +9,7 @@ module Mysqlman
 
     def initialize(user)
       @user = user
-      @conn = Connection.new
+      @conn = Connection.instance
       @logger = Logger.new(STDOUT)
     end
 

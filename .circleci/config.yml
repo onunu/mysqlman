@@ -11,6 +11,7 @@ jobs:
           - MYSQL_ALLOW_EMPTY_PASSWORD=true
           - MYSQL_DATABASE=test
           - MYSQL_USER=root
+          - MYSQL_ROOT_HOST=%
 
     steps:
       - checkout
@@ -26,10 +27,6 @@ jobs:
 
       # Bundle install dependencies
       - run: bundle install --jobs=4 --retry=3 --path=vendor/bundle
-
-    #      - run:
-    #          name: test mysql
-    #          command: mysql -uroot -e 'SELECT VERSION();'
 
       - run:
           name: Run RSpec

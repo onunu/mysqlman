@@ -3,7 +3,7 @@ require 'logger'
 module Mysqlman
   class Initializer
     def initialize
-      @conn = Connection.new
+      @conn = Connection.instance
       @logger = Logger.new(STDOUT)
     end
 

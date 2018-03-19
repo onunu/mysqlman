@@ -6,14 +6,14 @@ module Mysqlman
     PASSWORD_LENGTH = 8
     class << self
       def all
-        conn = Connection.new
+        conn = Connection.instance
         conn.query('SELECT Host, User FROM mysql.user').map do |row|
           new(host: row['Host'], user: row['User'])
         end
       end
 
       def find(user, host = HOST_ALL)
-        conn = Connection.new
+        conn = Connection.instance
         user = conn.query("SELECT Host, User FROM mysql.user WHERE Host = '#{host}' AND User = '#{user}'").first
         new(host: user['Host'], user: user['User']) unless user.nil?
       end
@@ -26,7 +26,7 @@ module Mysqlman
       @user = user
       @role = Role.find(role) unless role.nil?
       @privs = Privs.new(self)
-      @conn = Connection.new
+      @conn = Connection.instance
     end
 
     def name_with_host

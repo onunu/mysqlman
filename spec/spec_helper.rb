@@ -11,4 +11,11 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.before do
+    Mysqlman::Connection.instance.query('BEGIN')
+  end
+  config.after do
+    Mysqlman::Connection.instance.query('ROLLBACK')
+  end
 end

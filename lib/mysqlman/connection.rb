@@ -1,8 +1,12 @@
 require 'mysql2'
 require 'yaml'
+require 'singleton'
+require 'logger'
 
 module Mysqlman
   class Connection
+    include Singleton
+
     attr_accessor :conn
 
     def initialize
@@ -11,6 +15,7 @@ module Mysqlman
     end
 
     def query(query_string)
+      Logger.new(STDOUT).info(query_string)
       @conn.query(query_string)
     end
   end
