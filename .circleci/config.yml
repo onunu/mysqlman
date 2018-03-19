@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    parallelism: 2
+    parallelism: 1
     working_directory: ~/mysqlman
 
     docker:
