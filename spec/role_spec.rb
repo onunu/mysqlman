@@ -3,7 +3,7 @@ RSpec.describe Mysqlman::Role do
     let(:role) { Mysqlman::Role.new('tester', config) }
     context 'only global privs' do
       let(:config) do
-        { 'global' => ['select', 'update'] }
+        { 'global' => %w[select update] }
       end
       let(:expected_privs) do
         [
@@ -18,7 +18,7 @@ RSpec.describe Mysqlman::Role do
     context 'multiple levels privs' do
       let(:config) do
         {
-          'global' => ['create user', 'select'] ,
+          'global' => ['create user', 'select'],
           'schema' => { 'mysql' => ['update'] }
         }
       end
@@ -36,8 +36,7 @@ RSpec.describe Mysqlman::Role do
     context 'include all priv' do
       let(:config) do
         { 'table' =>
-          { 'mysql' => { 'user' => ['all'] } }
-        }
+          { 'mysql' => { 'user' => ['all'] } } }
       end
       let(:expected_privs) do
         [
@@ -51,7 +50,7 @@ RSpec.describe Mysqlman::Role do
           { schema: 'mysql', table: 'user', type: 'SELECT' },
           { schema: 'mysql', table: 'user', type: 'SHOW VIEW' },
           { schema: 'mysql', table: 'user', type: 'TRIGGER' },
-          { schema: 'mysql', table: 'user', type: 'UPDATE' },
+          { schema: 'mysql', table: 'user', type: 'UPDATE' }
         ]
       end
       it 'return correct privs' do
@@ -66,7 +65,7 @@ RSpec.describe Mysqlman::Role do
       context 'single role in one file' do
         let(:configs) do
           {
-            'tester' => { 'global' => ['select', 'update'] }
+            'tester' => { 'global' => %w[select update] }
           }
         end
         it 'return all role instance' do
@@ -76,12 +75,12 @@ RSpec.describe Mysqlman::Role do
       context 'multiple roles in one file' do
         let(:configs) do
           {
-            'tester' => { 'global' => ['select', 'update'] },
-            'tester_alt' => { 'global' => ['select', 'update'] }
+            'tester' => { 'global' => %w[select update] },
+            'tester_alt' => { 'global' => %w[select update] }
           }
         end
         it 'return all role instance' do
-          expect(Mysqlman::Role.all.map(&:name)).to eq ['tester', 'tester_alt']
+          expect(Mysqlman::Role.all.map(&:name)).to eq %w[tester tester_alt]
         end
       end
     end
@@ -92,8 +91,8 @@ RSpec.describe Mysqlman::Role do
       end
       let(:configs) do
         {
-          'tester' => { 'global' => ['select', 'update'] },
-          'tester_alt' => { 'global' => ['select', 'update'] }
+          'tester' => { 'global' => %w[select update] },
+          'tester_alt' => { 'global' => %w[select update] }
         }
       end
       it 'return the role instance' do

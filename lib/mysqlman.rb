@@ -1,4 +1,4 @@
-require "mysqlman/version"
+require 'mysqlman/version'
 require 'mysqlman/user'
 require 'mysqlman/role'
 require 'mysqlman/initializer'
@@ -17,5 +17,5 @@ module Mysqlman
 
   MANAGER_CONFIG = File.join(EXE_DIR, 'config', 'manager.yml')
 
-  HOST_ALL = '%'
+  HOST_ALL = '%'.freeze
 end

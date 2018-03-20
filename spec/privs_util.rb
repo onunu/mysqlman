@@ -21,7 +21,7 @@ RSpec.describe Mysqlman::PrivsUtil do
       end
     end
     context 'include grant option' do
-      let(:grant_option) { {schema: 'test_schema', table: 'test_table', type: 'GRANT OPTION' } }
+      let(:grant_option) { { schema: 'test_schema', table: 'test_table', type: 'GRANT OPTION' } }
       it 'all privileges of target lebel with grant option' do
         expect(Mysqlman::Privs.all('test_schema', 'test_table', true)).to eq expected.push(grant_option)
       end

@@ -1,7 +1,7 @@
 RSpec.describe Mysqlman::User do
   describe '#name_with_host' do
     it 'return hash includes name and host' do
-      expect(Mysqlman::User.new(user: 'root').name_with_host).to eq({ 'user' => 'root', 'host' => '%' })
+      expect(Mysqlman::User.new(user: 'root').name_with_host).to eq('user' => 'root', 'host' => '%')
     end
   end
 

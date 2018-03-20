@@ -44,7 +44,7 @@ module Mysqlman
     end
     # rubocop:enable Metrics/MethodLength
 
-    def delete_unknown_user(debug)
+    def delete_unknown_user(_debug)
       @current_users.each do |cu|
         cu.drop unless @managed_users.any? do |mu|
           cu.user == mu.user && cu.host == mu.host
@@ -52,7 +52,7 @@ module Mysqlman
       end
     end
 
-    def create_shortage_user(debug)
+    def create_shortage_user(_debug)
       @managed_users.each do |user|
         user.create unless user.exists?
       end
