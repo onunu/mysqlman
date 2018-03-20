@@ -1,8 +1,7 @@
 # Mysqlman
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/mysqlman`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Mysqlman is a tool manage users for MySQL.
+You can start management with writing some yaml files and executing some commands.
+And mysqlman provide feature to manage privileges(global, schema, table, but column)
 
 ## Installation
 
@@ -21,20 +20,51 @@ Or install it yourself as:
     $ gem install mysqlman
 
 ## Usage
+### 1. Setup
+Firstly, please create file for connecting MySQL.
+Please set the file in executing dir `config/manager.yml`
 
-TODO: Write usage instructions here
+```yml
+---
+host: 127.0.0.1
+username: root
+password: passw0rd
+```
 
-## Development
+#### Caution
+The manager needs some privileges. Read privileges to manage other users are following.
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+|schema|table|columns|
+|:-----|:----|:------|
+|mysql | user|User, Host|
+|information_schema|USER_PRIVILEGES|PRIVILEGE_TYPE, IS_GRANTABLE|
+|information_schema|SCHEMA_PRIVILEGES|TABLE_SCHEMA, PRIVILEGE_TYPE, IS_GRANTABLE|
+|information_schema|TABLE_PRIVILEGES|TABLE_SCHEMA, TABLE_NAME, PRIVILEGE_TYPE, IS_GRANTABLE|
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+And ofcourse, the manager needs privileges that you want to manage with grant option.
+
+### 2. Initialize
+Second, initialize the config.
+In initializing, mysqlman do followings.
+
+- Create each directory(roles.d, users.d, excludes.d)
+- Create exclude users config
+
+Execute:
+
+    $ mysqlman init
+
+Exclude users (=Unmanaged users) are that users are already exist in MySQL.
+Exclide users are written in `excludes.d/default.yml` by default.
+If you want to add unmanaged user, or to manage user written in excludes config, please edit the file by yourself.
+
+### 3. Write config
+
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/mysqlman.
+Bug reports and pull requests are welcome on GitHub at https://github.com/onunu/mysqlman.
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-# mysqlman
