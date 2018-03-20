@@ -10,7 +10,8 @@ module Mysqlman
     attr_accessor :conn
 
     def initialize
-      config = YAML.load_file(MANAGER_CONFIG).map { |k, v| [k.to_sym, v] }.to_h.merge(database: 'mysql')
+      config = YAML.load_file(MANAGER_CONFIG).map { |k, v| [k.to_sym, v] }.to_h
+      config.merge(database: 'mysql')
       @conn = Mysql2::Client.new(config)
     end
 

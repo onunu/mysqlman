@@ -7,11 +7,13 @@ module Mysqlman
       @logger = Logger.new(STDOUT)
     end
 
+    # rubocop:disable LineLength
     def init
       File.exist?(EXCLUDE_FILE) ? @logger.info('skip: creation excludes.d') : create_exclude_config
       Dir.exist?(ROLE_DIR) ? @logger.info('skip: creation roles.d') : create_roles_dir
       Dir.exist?(USER_DIR) ? @logger.info('skip: creation users.d') : create_users_dir
     end
+    # rubocop:enable LineLength
 
     private
 
@@ -20,7 +22,9 @@ module Mysqlman
         Dir.mkdir(EXCLUDE_DIR)
         @logger.info("created: #{EXCLUDE_DIR}")
       end
-      File.open(EXCLUDE_FILE, 'w') { |file| file.puts(User.all.map(&:name_with_host).to_yaml) }
+      File.open(EXCLUDE_FILE, 'w') do |file|
+        file.puts(User.all.map(&:name_with_host).to_yaml)
+      end
       @logger.info("created: #{EXCLUDE_FILE}")
     end
 

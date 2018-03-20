@@ -14,7 +14,12 @@ module Mysqlman
 
       def find(user, host = HOST_ALL)
         conn = Connection.instance
-        user = conn.query("SELECT Host, User FROM mysql.user WHERE Host = '#{host}' AND User = '#{user}'").first
+        user = conn.query(<<-QUERY
+          SELECT Host, User
+          FROM mysql.user
+          WHERE Host = '#{host}' AND User = '#{user}'
+        QUERY
+                         ).first
         new(host: user['Host'], user: user['User']) unless user.nil?
       end
     end
@@ -34,15 +39,26 @@ module Mysqlman
     end
 
     def exists?
-      user = @conn.query("SELECT Host, User FROM mysql.user WHERE Host = '#{@host}' AND User = '#{@user}'").first
+      user = @conn.query(<<-QUERY
+        SELECT Host, User
+        FROM mysql.user
+        WHERE Host = '#{@host}' AND User = '#{@user}'
+      QUERY
+                        ).first
       !user.nil?
     end
 
     def create(debug = false)
       password = debug ? '******' : SecureRandom.urlsafe_base64(PASSWORD_LENGTH)
-      @conn.query("CREATE USER '#{@user}'@'#{@host}' IDENTIFIED BY '#{password}'") unless debug
-      Logger.new(STDOUT).info("Create user: '#{@user}'@'#{@host}', password is '#{password}'")
+      @conn.query(create_user_query(password)) unless debug
+      Logger.new(STDOUT).info(
+        "Create user: '#{@user}'@'#{@host}', password is '#{password}'"
+      )
       self
+    end
+
+    def create_user_query(password)
+      "CREATE USER '#{@user}'@'#{@host}' IDENTIFIED BY '#{password}'"
     end
 
     def drop(debug = false)
