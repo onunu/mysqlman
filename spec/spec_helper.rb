@@ -1,5 +1,6 @@
 require "bundler/setup"
 require "mysqlman"
+require 'pry'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -12,10 +13,15 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
+  unmanaged_users = []
   config.before do
-    Mysqlman::Connection.instance.query('BEGIN')
+    unmanaged_users = Mysqlman::User.all.map(&:name_with_host)
   end
   config.after do
-    Mysqlman::Connection.instance.query('ROLLBACK')
+    all_users = Mysqlman::User.all.map(&:name_with_host)
+    created_users = (all_users - unmanaged_users).map do |user|
+      Mysqlman::User.new(user: user['user'], host: user['host'])
+    end
+    created_users.map(&:drop)
   end
 end

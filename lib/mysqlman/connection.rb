@@ -15,7 +15,6 @@ module Mysqlman
     end
 
     def query(query_string)
-      Logger.new(STDOUT).info(query_string)
       @conn.query(query_string)
     end
   end

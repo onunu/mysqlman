@@ -48,12 +48,21 @@ RSpec.describe Mysqlman::User do
     end
   end
 
-  describe '.find' do
-    it 'return user instance' do
+  describe '.all' do
+    let(:expected_names) do
+      Mysqlman::Connection.instance.query('SELECT Host, User FROM mysql.user').map do |row|
+        { 'user' => row['User'], 'host' => row['Host'] }
+      end
+    end
+    it 'return all users instance' do
+      expect(Mysqlman::User.all.map(&:name_with_host)).to eq expected_names
     end
   end
-  describe '.all' do
-    it 'return all users instance' do
+
+  describe '.find' do
+    let(:expected_user) { { 'user' => 'root', 'host' => '%' } }
+    it 'return user instance' do
+      expect(Mysqlman::User.find('root').name_with_host).to eq expected_user
     end
   end
 end
