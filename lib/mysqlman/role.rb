@@ -6,8 +6,10 @@ module Mysqlman
       def all
         files = Dir.glob("#{ROLE_DIR}/*.yml")
         files.map do |file|
-          new(YAML.load_file(file))
-        end
+          YAML.load_file(file).map do |name, config|
+            new(name, config)
+          end
+        end.flatten
       end
 
       def find(name)
@@ -16,11 +18,11 @@ module Mysqlman
       end
     end
 
-    attr_reader :name, :config
+    attr_reader :name
 
-    def initialize(config)
-      @name = config.keys.first
-      @config = config.values.first
+    def initialize(name, config)
+      @name = name
+      @config = config
     end
 
     def privs

@@ -61,7 +61,7 @@ RSpec.describe Mysqlman::User do
 
   describe '.find' do
     let(:expected_user) { { 'user' => 'root', 'host' => '%' } }
-    it 'return user instance' do
+    it 'return the user instance' do
       expect(Mysqlman::User.find('root').name_with_host).to eq expected_user
     end
   end
