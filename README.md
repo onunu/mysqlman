@@ -13,11 +13,15 @@ gem 'mysqlman'
 
 And then execute:
 
-    $ bundle
+```
+$ bundle
+```
 
 Or install it yourself as:
 
-    $ gem install mysqlman
+```
+$ gem install mysqlman
+```
 
 ## Usage
 ### 1. Setup
@@ -53,7 +57,9 @@ In initializing, mysqlman do followings.
 
 Execute:
 
-    $ mysqlman init
+```
+$ mysqlman init
+```
 
 Exclude users (=Unmanaged users) are that users are already exist in MySQL.
 Exclude users are written in `excludes.d/default.yml` by default.
@@ -126,15 +132,19 @@ engineer: # require: the role name
 ### 4. Apply settings
 After writing settings, please apply them.
 
-- dry-run
+#### dry-run
 You can confirm changes witout appling settings.
 
-    $ mysqlman dryrun
+```
+$ mysqlman dryrun
+```
 
-- apply
+#### apply
 If the changes are same as your plan, please execute apply command.
 
-    $ mysqlman apply
+```
+$ mysqlman apply
+```
 
 Changes are put in STDOUT.
 
