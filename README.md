@@ -32,7 +32,8 @@ password: passw0rd
 ```
 
 #### Caution
-The manager needs some privileges. Read privileges to manage other users are following.
+The manager needs some privileges.
+The read privileges to manage other users are following.
 
 |schema|table|columns|
 |:-----|:----|:------|
@@ -47,7 +48,7 @@ And ofcourse, the manager needs privileges that you want to manage with grant op
 Second, initialize the config.
 In initializing, mysqlman do followings.
 
-- Create each directory(roles.d, users.d, excludes.d)
+- Create each directories(roles.d, users.d, excludes.d)
 - Create exclude users config
 
 Execute:
@@ -55,7 +56,7 @@ Execute:
     $ mysqlman init
 
 Exclude users (=Unmanaged users) are that users are already exist in MySQL.
-Exclide users are written in `excludes.d/default.yml` by default.
+Exclude users are written in `excludes.d/default.yml` by default.
 If you want to add unmanaged user, or to manage user written in excludes config, please edit the file by yourself.
 
 ### 3. Write config
@@ -66,9 +67,9 @@ please confirm how to write them.
 Role is config of database privileges.
 All users are belong to one of roles.
 
-In `roles.d/precures.yml` as example:
+In `roles.d/engineer.yml` as example:
 
-```
+```yml
 ---
 engineer: # require: as a role name
   global: # optional: global privileges
@@ -107,6 +108,35 @@ Please confirm following.
 ###### GRANT OPTION
 `GRANT OPTION` is not included in `ALL` privileges.
 If you want add the privileges, please set bot of them.
+
+#### 3-2 User
+User is config of information to connect Mysql.
+All users are belong one of roles.
+
+In `users.d/engineers.yml`:
+
+```yml
+---
+engineer: # require: the role name
+  - onunu: # require: user name
+  - application_user:
+    host: 10.0.0.1 # optional: connectable host(default '%')
+```
+
+### 4. Apply settings
+After writing settings, please apply them.
+
+- dry-run
+You can confirm changes witout appling settings.
+
+    $ mysqlman dryrun
+
+- apply
+If the changes are same as your plan, please execute apply command.
+
+    $ mysqlman apply
+
+Changes are put in STDOUT.
 
 ## Contributing
 
