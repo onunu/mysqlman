@@ -1,8 +1,11 @@
 # Mysqlman
 
 [![Gem Version](https://badge.fury.io/rb/mysqlman.svg)](https://badge.fury.io/rb/mysqlman)
+
 [![CircleCI](https://circleci.com/gh/onunu/mysqlman/tree/master.svg?style=svg)](https://circleci.com/gh/onunu/mysqlman/tree/master)
+
 intainability](https://api.codeclimate.com/v1/badges/f3c9e8075c6482919d25/maintainability)](https://codeclimate.com/github/onunu/mysqlman/maintainability)
+
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
 Mysqlman is a tool manage users for MySQL.
