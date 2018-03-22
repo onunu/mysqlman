@@ -59,7 +59,54 @@ Exclide users are written in `excludes.d/default.yml` by default.
 If you want to add unmanaged user, or to manage user written in excludes config, please edit the file by yourself.
 
 ### 3. Write config
+Write user, role settings.
+please confirm how to write them.
 
+#### 3-1 Role
+Role is config of database privileges.
+All users are belong to one of roles.
+
+In `roles.d/precures.yml` as example:
+
+```
+---
+engineer: # require: as a role name
+  global: # optional: global privileges
+    - select
+  schema: # optional: schema privileges
+    example_schema1: # requrie: schema name
+      - update
+      - insert
+    example_schema2:
+      - update
+  table: # optional: table privileges
+    example_schema1: # require: schema name
+      example_table: # require: table name
+        - delete:
+```
+
+You can write privilege type in format of followings.
+
+- OK:
+  - CREATE USER
+  - create user
+  - CREATE_USER
+  - create_user
+- NG:
+  - CREATEUSER
+  - createuser
+
+##### Special privileges
+###### ALL
+`ALL` type privileges alias of some some privileges of the target level.
+Please confirm following.
+
+(WIP)
+[All privileges](https://github.com/onunu/mysqlman/blob/master/lib/mysqlman/all_privileges.yml)
+
+###### GRANT OPTION
+`GRANT OPTION` is not included in `ALL` privileges.
+If you want add the privileges, please set bot of them.
 
 ## Contributing
 
